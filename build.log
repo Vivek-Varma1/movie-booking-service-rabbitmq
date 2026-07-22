@@ -1,0 +1,46 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.vivekvarma1:movie-booking-system >----------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ movie-booking-system ---
+[INFO] Deleting /home/user/Videos/LLD/Projects/movie-booking-system/target
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ movie-booking-system ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ movie-booking-system ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 103 source files with javac [debug parameters release 21] to target/classes
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /home/user/Videos/LLD/Projects/movie-booking-system/src/main/java/com/vivekvarma1/moviebooking/event/mapper/MovieMapper.java:[42,10] Unmapped target properties: "id, movieName, durationInMinutes, language, genres, certificate, releaseDate, version, createdAt, updatedAt".
+[INFO] 1 warning
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /home/user/Videos/LLD/Projects/movie-booking-system/src/main/java/com/vivekvarma1/moviebooking/theatre/mapper/TheatreMapper.java:[20,28] Unknown property "cityId" in result type TheatreSummaryResponse. Did you mean "city"?
+[ERROR] /home/user/Videos/LLD/Projects/movie-booking-system/src/main/java/com/vivekvarma1/moviebooking/theatre/mapper/TheatreMapper.java:[20,28] Unknown property "cityName" in result type TheatreSummaryResponse. Did you mean "city"?
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.417 s
+[INFO] Finished at: 2026-07-17T23:52:12+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.15.0:compile (default-compile) on project movie-booking-system: Compilation failure: Compilation failure: 
+[ERROR] /home/user/Videos/LLD/Projects/movie-booking-system/src/main/java/com/vivekvarma1/moviebooking/theatre/mapper/TheatreMapper.java:[20,28] Unknown property "cityId" in result type TheatreSummaryResponse. Did you mean "city"?
+[ERROR] /home/user/Videos/LLD/Projects/movie-booking-system/src/main/java/com/vivekvarma1/moviebooking/theatre/mapper/TheatreMapper.java:[20,28] Unknown property "cityName" in result type TheatreSummaryResponse. Did you mean "city"?
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
