@@ -10,6 +10,8 @@ public record BookingResponse(
 
         Long bookingId,
 
+        Long userId,
+
         Long showId,
 
         String movieName,

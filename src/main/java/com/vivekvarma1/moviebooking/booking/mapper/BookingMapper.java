@@ -11,9 +11,14 @@ import org.mapstruct.Mapping;
 public interface BookingMapper {
 
     @Mapping(target = "bookingId", source = "id")
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "showId", source = "show.id")
     @Mapping(target = "movieName", source = "show.movie.movieName")
     @Mapping(target = "theatreName", source = "show.screen.theatre.name")
     @Mapping(target = "screenName", source = "show.screen.name")
+    @Mapping(target = "bookingStatus", source = "bookingStatus")
+    @Mapping(target = "totalAmount", source = "totalAmount")
+    @Mapping(target = "bookedAt", source = "bookedAt")
     @Mapping(target = "seats", source = "bookingSeats")
     BookingResponse toResponse(Booking booking);
 

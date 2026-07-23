@@ -131,7 +131,22 @@ public class ShowSeat {
         this.lockedBy = user;
         this.lockedUntil = until;
     }
+/*
+public void lock(User user, LocalDateTime until) {
 
+    if (isLockExpired()) {
+        unlock();
+    }
+
+    if (!isAvailable()) {
+        throw new SeatAlreadyLockedException(seat.getSeatLabel());
+    }
+
+    this.status = ShowSeatStatus.LOCKED;
+    this.lockedBy = user;
+    this.lockedUntil = until;
+}
+ */
     public void book(User user) {
         if (!isLocked() || !this.lockedBy.equals(user)) {
             throw new IllegalStateException("Seat must be locked by the booking user before it can be booked");
@@ -169,5 +184,10 @@ public class ShowSeat {
 
     public boolean isBooked() {
         return status == ShowSeatStatus.BOOKED;
+    }
+    public boolean isLockedBy(User user) {
+        return lockedBy != null
+                && lockedBy.getId().equals(user.getId())
+                && isLocked();
     }
 }

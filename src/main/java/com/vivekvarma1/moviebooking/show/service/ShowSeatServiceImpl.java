@@ -34,7 +34,7 @@ public class ShowSeatServiceImpl implements ShowSeatService {
     private final ShowSeatRepository showSeatRepository;
     private final ShowSeatMapper showSeatMapper;
     private final UserRepository userRepository;
-    private static final int LOCK_DURATION_MINUTES = 1;
+    private static final int LOCK_DURATION_MINUTES = 5;
 
     @Override
     public ShowSeatLayoutResponse getSeatLayout(

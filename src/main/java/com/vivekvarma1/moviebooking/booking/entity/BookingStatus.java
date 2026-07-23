@@ -3,6 +3,8 @@ public enum BookingStatus {
 
     CREATED,
 
+    PAYMENT_STARTED,
+
     CONFIRMED,
 
     CANCELLED,

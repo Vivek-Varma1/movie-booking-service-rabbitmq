@@ -7,13 +7,13 @@ import java.util.List;
 
 public record CreateBookingRequest(
 
-        @NotNull
+        @NotNull(message = "User id is required")
         Long userId,
 
-        @NotNull
+        @NotNull(message = "Show id is required")
         Long showId,
 
-        @NotEmpty
+        @NotEmpty(message = "At least one seat must be selected")
         List<Long> showSeatIds
 
 ) {

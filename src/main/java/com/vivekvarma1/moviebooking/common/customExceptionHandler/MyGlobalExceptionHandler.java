@@ -213,5 +213,18 @@ public class MyGlobalExceptionHandler {
                         )
                 );
     }
+    @ExceptionHandler(SeatLockExpiredException.class)
+    public ResponseEntity<APIResponse> handleSeatLockExpiredException(
+            SeatLockExpiredException ex
+    ) {
 
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
 }

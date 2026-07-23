@@ -1,14 +1,20 @@
 package com.vivekvarma1.moviebooking.booking.service;
 
-import com.vivekvarma1.moviebooking.user.entity.User;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
+import com.vivekvarma1.moviebooking.booking.dto.request.CreateBookingRequest;
+import com.vivekvarma1.moviebooking.booking.dto.response.BookingResponse;
 
 import java.util.List;
 
-
 public interface BookingService {
 
-    String createBooking(User user,
-                         long showId, List<Integer> seatIds);
+    BookingResponse createBooking(CreateBookingRequest request);
+
+    BookingResponse confirmBooking(Long bookingId);
+
+    BookingResponse cancelBooking(Long bookingId);
+
+    BookingResponse getBooking(Long bookingId);
+
+    List<BookingResponse> getUserBookings(Long userId);
+
 }

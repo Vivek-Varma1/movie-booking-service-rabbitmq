@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,6 +66,16 @@ public interface ShowSeatRepository
         """)
     List<Long> findIdsByShowId(@Param("showId") Long showId);
 
+    @Query("""
+       SELECT ss
+       FROM ShowSeat ss
+       WHERE ss.lockedBy IS NOT NULL
+       AND ss.lockedUntil < :now
+       """)
+    List<ShowSeat> findExpiredLocks(
+            LocalDateTime now
+    );
+
     @Modifying
     @Query("""
 UPDATE ShowSeat ss
@@ -83,5 +94,6 @@ SET ss.status = com.vivekvarma1.moviebooking.show.entity.ShowSeatStatus.AVAILABL
 WHERE ss.id = :seatId
 """)
     int unlockSeat(Long seatId);
+
 
 }
