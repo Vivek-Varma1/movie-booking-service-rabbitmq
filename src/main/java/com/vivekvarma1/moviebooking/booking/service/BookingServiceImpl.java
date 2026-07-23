@@ -3,14 +3,14 @@ package com.vivekvarma1.moviebooking.booking.service;
 import com.vivekvarma1.moviebooking.booking.dto.request.CreateBookingRequest;
 import com.vivekvarma1.moviebooking.booking.dto.response.BookingResponse;
 import com.vivekvarma1.moviebooking.booking.entity.Booking;
-import com.vivekvarma1.moviebooking.booking.entity.BookingStatus;
+import com.vivekvarma1.moviebooking.booking.event.BookingConfirmedEvent;
 import com.vivekvarma1.moviebooking.booking.mapper.BookingMapper;
 import com.vivekvarma1.moviebooking.booking.repository.BookingRepository;
-import com.vivekvarma1.moviebooking.booking.service.BookingService;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.InvalidShowSeatException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFoundException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatAlreadyLockedException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatLockExpiredException;
+import com.vivekvarma1.moviebooking.kafka.BookingEventProducer;
 import com.vivekvarma1.moviebooking.show.entity.Show;
 import com.vivekvarma1.moviebooking.show.entity.ShowSeat;
 import com.vivekvarma1.moviebooking.show.repository.ShowRepository;
@@ -164,7 +164,7 @@ public class BookingServiceImpl implements BookingService {
 
                         booking.getUser().getId(),
 
-                        booking.getUser().getEmail(),
+                        booking.getUser().getEmailAddress(),
 
                         booking.getUser().getName(),
 
@@ -184,7 +184,7 @@ public class BookingServiceImpl implements BookingService {
                                 .getName(),
 
                         booking.getShow()
-                                .getStartTime(),
+                                .getStartDateTime(),
 
                         booking.getBookingSeats()
                                 .stream()
