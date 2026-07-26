@@ -1,5 +1,6 @@
 package com.vivekvarma1.moviebooking.show.entity;
 
+import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatAlreadyBookedException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatAlreadyLockedException;
 import com.vivekvarma1.moviebooking.theatre.entity.Seat;
 import com.vivekvarma1.moviebooking.user.entity.User;
@@ -123,10 +124,34 @@ public class ShowSeat {
 //        this.lockedBy = user;
 //        this.lockedUntil = until;
 //    }
+
+    /**
+     * Checks if the seat can be locked by a specific user.
+     * A seat is available if it's AVAILABLE, its lock expired, or it's ALREADY locked by the SAME user.
+     */
+    public boolean isLockableBy(User user) {
+        if (isBooked()) {
+            return false;
+        }
+        if (isAvailable()) {
+            return true;
+        }
+        // If it's locked, it's lockable ONLY if the same user holds the lock or if the lock has expired
+        return isLockedBy(user) || isLockExpired();
+    }
+
     public void lock(User user, LocalDateTime until) {
-        if (!isAvailable()) {
+        if (isBooked()) {
+            throw new SeatAlreadyBookedException(seat.getSeatLabel());
+        }
+
+        // If locked by someone else and lock hasn't expired, reject
+        if (isLocked() && !isLockedBy(user)) {
             throw new SeatAlreadyLockedException(seat.getSeatLabel());
         }
+//        if (!isAvailable()) {
+//            throw new SeatAlreadyLockedException(seat.getSeatLabel());
+//        }
         this.status = ShowSeatStatus.LOCKED;
         this.lockedBy = user;
         this.lockedUntil = until;

@@ -59,6 +59,9 @@ public interface ShowSeatRepository
             Long showId,
             List<Long> seatIds
     );
+
+    List<ShowSeat> findAllByShowIdAndLockedById(Long showId, Long userId);
+
     @Query("""
         select ss.id
         from ShowSeat ss

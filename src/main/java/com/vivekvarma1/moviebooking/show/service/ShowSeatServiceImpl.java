@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -117,21 +118,35 @@ public class ShowSeatServiceImpl implements ShowSeatService {
            throw new InvalidShowSeatException();
         }
 
+        // 2. Fetch all seats currently locked by this user for this show
+        List<ShowSeat> currentlyLockedByUsers = showSeatRepository.findAllByShowIdAndLockedById(
+                request.showId(),
+                user.getId()
+        );
+
+        // 3. Release previous seats held by user that are NOT in the new selection (e.g., release A2)
+        Set<Long> requestedSeatIds = request.showSeatIds().stream().collect(Collectors.toSet());
+        for (ShowSeat existingSeat : currentlyLockedByUsers) {
+            if (!requestedSeatIds.contains(existingSeat.getId())) {
+                existingSeat.unlock(); // Unlocks A2 so others can select it immediately
+            }
+        }
+
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime lockedUntil = now.plusMinutes(LOCK_DURATION_MINUTES);
 
         for (ShowSeat showSeat : showSeats) {
 
-//            if (showSeat.isBooked()) {
-//                throw new SeatAlreadyBookedException(
-//                        showSeat.getSeat().getSeatLabel()
-//                );
-//            }
 
             if (showSeat.isBooked()) {
                 throw new SeatAlreadyBookedException(
                         showSeat.getSeat().getSeatLabel()
                 );
+            }
+
+            // Check if locked by ANOTHER user
+            if (showSeat.isLocked() && !showSeat.isLockedBy(user)) {
+                throw new SeatAlreadyLockedException(showSeat.getSeat().getSeatLabel());
             }
 
             if (showSeat.isLockExpired()) {

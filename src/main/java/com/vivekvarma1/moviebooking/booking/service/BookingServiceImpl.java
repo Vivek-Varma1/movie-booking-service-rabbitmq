@@ -67,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
         for (ShowSeat showSeat : showSeats) {
             if (showSeat.isLockExpired()) {
                 showSeat.unlock();
-                throw new SeatAlreadyLockedException(
+                throw new SeatLockExpiredException(
                         "Seat lock has expired."
                 );
             }
@@ -154,9 +154,12 @@ public class BookingServiceImpl implements BookingService {
 
         booking.confirm();
         Ticket ticket = ticketService.generateTicket(booking);
-        bookingEventProducer.publish(
+        String qrUrl =
+                "http://localhost:8080/api/tickets/"
+                        + ticket.getId()
+                        + "/qr";
 
-                new BookingConfirmedEvent(
+            BookingConfirmedEvent event=    new BookingConfirmedEvent(
 
                         booking.getId(),
 
@@ -193,11 +196,14 @@ public class BookingServiceImpl implements BookingService {
                                                 .getSeat()
                                                 .getSeatLabel()
                                 )
-                                .toList()
-
-                )
+                                .toList(),
+                        qrUrl
 
         );
+
+
+       System.out.println("Publishing event: {}"+ event);
+        bookingEventProducer.publish(event);
 
         return bookingMapper.toResponse(booking);
     }

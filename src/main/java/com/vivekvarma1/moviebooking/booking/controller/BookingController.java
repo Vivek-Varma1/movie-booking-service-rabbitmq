@@ -3,9 +3,12 @@ package com.vivekvarma1.moviebooking.booking.controller;
 import com.vivekvarma1.moviebooking.booking.dto.request.CreateBookingRequest;
 import com.vivekvarma1.moviebooking.booking.dto.response.BookingResponse;
 import com.vivekvarma1.moviebooking.booking.service.BookingService;
+import com.vivekvarma1.moviebooking.ticket.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final TicketService ticketService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -44,6 +48,19 @@ public class BookingController {
             @PathVariable Long bookingId
     ) {
         return bookingService.getBooking(bookingId);
+    }
+    @GetMapping(
+            value = "/{ticketId}/qr",
+            produces = MediaType.IMAGE_PNG_VALUE
+    )
+    public ResponseEntity<byte[]> getQrCode(
+            @PathVariable Long ticketId
+    ) {
+
+        return ResponseEntity.ok(
+                ticketService.getQrCode(ticketId)
+        );
+
     }
 
     @GetMapping("/users/{userId}")

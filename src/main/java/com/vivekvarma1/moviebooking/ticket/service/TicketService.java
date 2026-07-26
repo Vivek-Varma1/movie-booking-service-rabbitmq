@@ -10,4 +10,6 @@ public interface TicketService {
 
     TicketResponse getTicket(Long bookingId);
 
+    byte[] getQrCode(Long ticketId);
+
 }

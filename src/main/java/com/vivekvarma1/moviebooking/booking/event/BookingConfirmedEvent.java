@@ -25,7 +25,8 @@ public record BookingConfirmedEvent(
 
         LocalDateTime showTime,
 
-        List<String> seats
+        List<String> seats,
+        String qrUrl
 
 ) {
 }

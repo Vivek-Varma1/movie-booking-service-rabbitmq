@@ -20,6 +20,8 @@ import java.util.UUID;
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
+    private final QRCodeService qrCodeService;
+
 
     @Override
     public Ticket generateTicket(Booking booking) {
@@ -29,7 +31,11 @@ public class TicketServiceImpl implements TicketService {
                 .ticketNumber(generateTicketNumber())
                 .issuedAt(LocalDateTime.now())
                 .build();
+        String qrContent = buildQrContent(ticket);
 
+        byte[] qrCode = qrCodeService.generateQRCode(qrContent);
+
+        ticket.setQrCode(qrCode);
         return ticketRepository.save(ticket);
     }
 
@@ -68,7 +74,10 @@ public class TicketServiceImpl implements TicketService {
 
                 ticket.getIssuedAt(),
 
-                null
+                "http://localhost:8080/api/tickets/"
+                        + ticket.getId()
+                        + "/qr"
+
         );
     }
 
@@ -82,6 +91,55 @@ public class TicketServiceImpl implements TicketService {
                 .toString()
                 .substring(0, 8)
                 .toUpperCase();
+    }
+//    private String buildQrContent(Ticket ticket, Booking booking) {
+//
+//        String seats = booking.getBookingSeats()
+//                .stream()
+//                .map(bs -> bs.getShowSeat()
+//                        .getSeat()
+//                        .getSeatLabel())
+//                .toList()
+//                .toString();
+//
+//        return """
+//            Ticket Number : %s
+//            Booking Id    : %d
+//            Movie         : %s
+//            Theatre       : %s
+//            Screen        : %s
+//            Show Time     : %s
+//            Seats         : %s
+//            """
+//                .formatted(
+//                        ticket.getTicketNumber(),
+//                        booking.getId(),
+//                        booking.getShow().getMovie().getMovieName(),
+//                        booking.getShow().getScreen().getTheatre().getName(),
+//                        booking.getShow().getScreen().getName(),
+//                        booking.getShow().getStartDateTime(),
+//                        seats
+//                );
+//    }
+private String buildQrContent(Ticket ticket) {
+
+    return "http://localhost:8080/api/tickets/verify/"
+            + ticket.getTicketNumber();
+
+}
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] getQrCode(Long ticketId) {
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Ticket",
+                                "ticketId",
+                                ticketId
+                        ));
+
+        return ticket.getQrCode();
     }
 
 }

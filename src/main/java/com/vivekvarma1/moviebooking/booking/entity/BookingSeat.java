@@ -9,10 +9,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
         name = "booking_seats",
+//        uniqueConstraints = {
+//                @UniqueConstraint(
+//                        name = "uk_showseat_once",
+//                        columnNames = {"show_seat_id"}
+//                )
+//        },
         uniqueConstraints = {
+                // Allows duplicate show_seat_id for EXPIRED/CANCELLED,
+                // but prevents duplicates when is_active_or_confirmed is true.
                 @UniqueConstraint(
-                        name = "uk_showseat_once",
-                        columnNames = {"show_seat_id"}
+                        name = "uk_showseat_active_booking",
+                        columnNames = {"show_seat_id", "is_active"}
                 )
         },
         indexes = {
