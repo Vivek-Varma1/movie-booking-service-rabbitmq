@@ -6,6 +6,7 @@ import com.vivekvarma1.moviebooking.user.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,16 +33,26 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     })
     List<Booking> findByUserOrderByBookedAtDesc(User user);
 
-    @Query("""
-       SELECT DISTINCT b
-       FROM Booking b
-       JOIN FETCH b.bookingSeats bs
-       JOIN FETCH bs.showSeat ss
-       WHERE b.bookingStatus = :status
-       """)
-    List<Booking> findByBookingStatus(
-            BookingStatus status
-    );
+//    @Query("""
+//       SELECT DISTINCT b
+//       FROM Booking b
+//       JOIN FETCH b.bookingSeats bs
+//       JOIN FETCH bs.showSeat ss
+//       WHERE b.bookingStatus = :status
+//       """)
+//    List<Booking> findByBookingStatus(
+//            BookingStatus status
+//    );
+@Query("""
+   SELECT DISTINCT b
+   FROM Booking b
+   LEFT JOIN FETCH b.bookingSeats bs
+   LEFT JOIN FETCH bs.showSeat ss
+   LEFT JOIN FETCH ss.seat
+   LEFT JOIN FETCH b.user
+   WHERE b.bookingStatus = :status
+   """)
+List<Booking> findByBookingStatus(@Param("status") BookingStatus status);
 
     List<Booking> findByBookingStatusAndBookedAtBefore(
             BookingStatus status,

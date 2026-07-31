@@ -16,15 +16,16 @@ import lombok.NoArgsConstructor;
 //                )
 //        },
         uniqueConstraints = {
-                // Allows duplicate show_seat_id for EXPIRED/CANCELLED,
-                // but prevents duplicates when is_active_or_confirmed is true.
+                // Enforces that a show_seat_id can only have ONE row where active_flag = TRUE (1).
+                // When active_flag is NULL (cancelled/expired), SQL allows unlimited rows.
                 @UniqueConstraint(
                         name = "uk_showseat_active_booking",
-                        columnNames = {"show_seat_id", "is_active"}
+                        columnNames = {"show_seat_id", "active_flag"}
                 )
         },
         indexes = {
-                @Index(name = "idx_bookingseat_booking", columnList = "booking_id")
+                @Index(name = "idx_bookingseat_booking", columnList = "booking_id"),
+                @Index(name = "idx_bookingseat_showseat", columnList = "show_seat_id")
         }
 )
 @Getter
@@ -44,12 +45,20 @@ public class BookingSeat {
     @JoinColumn(name = "show_seat_id", nullable = false, updatable = false)
     private ShowSeat showSeat;
 
+    /**
+     * Set to Boolean.TRUE for active/pending/confirmed bookings.
+     * Set to NULL when the booking is CANCELLED or EXPIRED so the seat can be re-booked.
+     */
+    @Column(name = "active_flag")
+    private Boolean activeFlag = Boolean.TRUE;
+
     BookingSeat(Booking booking, ShowSeat showSeat) {
         if (booking == null || showSeat == null) {
             throw new IllegalArgumentException("booking and showSeat are required");
         }
         this.booking = booking;
         this.showSeat = showSeat;
+        this.activeFlag = Boolean.TRUE;
     }
 
     @Override
@@ -58,7 +67,9 @@ public class BookingSeat {
         if (!(o instanceof BookingSeat that)) return false;
         return id != null && id.equals(that.id);
     }
-
+    public void deactivate() {
+        this.activeFlag = null; // Releasing the unique constraint
+    }
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -68,5 +79,7 @@ public class BookingSeat {
     public String toString() {
         return "BookingSeat{id=%d}".formatted(id);
     }
+
+
 
 }

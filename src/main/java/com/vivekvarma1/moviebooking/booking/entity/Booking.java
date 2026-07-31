@@ -196,21 +196,18 @@ public class Booking {
     /** CREATED or PAYMENT_STARTED -> CANCELLED. Confirmed bookings need a separate refund flow. */
     public void cancel() {
         if (!isCreated() && !isPaymentStarted()) {
-            throw new InvalidBookingStateException(
-                    "Only CREATED or PAYMENT_STARTED bookings can be cancelled."
-            );
+            throw new InvalidBookingStateException("Only CREATED or PAYMENT_STARTED bookings can be cancelled.");
         }
-        bookingStatus = BookingStatus.CANCELLED;
+        this.bookingStatus = BookingStatus.CANCELLED;
+        this.bookingSeats.forEach(BookingSeat::deactivate);
     }
 
-    /** CREATED or PAYMENT_STARTED -> EXPIRED. Call from the seat-hold reaper job. */
     public void expire() {
         if (!isCreated() && !isPaymentStarted()) {
-            throw new InvalidBookingStateException(
-                    "Only CREATED or PAYMENT_STARTED bookings can expire."
-            );
+            throw new InvalidBookingStateException("Only CREATED or PAYMENT_STARTED bookings can expire.");
         }
-        bookingStatus = BookingStatus.EXPIRED;
+        this.bookingStatus = BookingStatus.EXPIRED;
+        this.bookingSeats.forEach(BookingSeat::deactivate);
     }
 
     @Override

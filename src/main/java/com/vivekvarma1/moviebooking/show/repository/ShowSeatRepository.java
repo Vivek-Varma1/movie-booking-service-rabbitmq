@@ -59,6 +59,12 @@ public interface ShowSeatRepository
             Long showId,
             List<Long> seatIds
     );
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM ShowSeat s WHERE s.show.id = :showId AND s.id IN :seatIds")
+    List<ShowSeat> findAllByShowIdAndIdInWithLock(
+            @Param("showId") Long showId,
+            @Param("seatIds") List<Long> seatIds
+    );
 
     List<ShowSeat> findAllByShowIdAndLockedById(Long showId, Long userId);
 

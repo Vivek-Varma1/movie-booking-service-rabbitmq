@@ -7,8 +7,8 @@ import java.util.List;
 
 public record CreateBookingRequest(
 
-        @NotNull(message = "User id is required")
-        Long userId,
+//        @NotNull(message = "User id is required")
+//        Long userId,
 
         @NotNull(message = "Show id is required")
         Long showId,

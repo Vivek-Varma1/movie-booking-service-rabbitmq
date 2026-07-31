@@ -5,7 +5,9 @@ import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFou
 import com.vivekvarma1.moviebooking.ticket.entity.Ticket;
 import com.vivekvarma1.moviebooking.ticket.repository.TicketRepository;
 import com.vivekvarma1.moviebooking.ticket.response.TicketResponse;
+import com.vivekvarma1.moviebooking.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public TicketResponse getTicket(Long bookingId) {
+    public TicketResponse getTicket(Long bookingId, Long user) {
 
         Ticket ticket = ticketRepository.findByBookingId(bookingId)
                 .orElseThrow(() ->
@@ -50,6 +52,9 @@ public class TicketServiceImpl implements TicketService {
                                 "bookingId",
                                 bookingId
                         ));
+        if (!ticket.getBooking().getUser().getId().equals(user)) {
+            throw new AccessDeniedException("You are not allowed to access this ticket.");
+        }
 
         Booking booking = ticket.getBooking();
 

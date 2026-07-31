@@ -97,22 +97,27 @@ public class ShowSeatServiceImpl implements ShowSeatService {
     @Override
     @Transactional
     public LockSeatsResponse lockSeats(
+            User user,
             LockSeatsRequest request
     ) {
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User",
-                                "userId",
-                                request.userId()
-                        )
-                );
+//        User user = userRepository.findById(request.userId())
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException(
+//                                "User",
+//                                "userId",
+//                                request.userId()
+//                        )
+//                );
 
-        List<ShowSeat> showSeats =
-                showSeatRepository.findAllByShowIdAndIdIn(
-                        request.showId(),
-                        request.showSeatIds()
-                );
+//        List<ShowSeat> showSeats =
+//                showSeatRepository.findAllByShowIdAndIdIn(
+//                        request.showId(),
+//                        request.showSeatIds()
+//                );
+        List<ShowSeat> showSeats = showSeatRepository.findAllByShowIdAndIdInWithLock(
+                request.showId(),
+                request.showSeatIds()
+        );
 
         if (showSeats.size() != request.showSeatIds().size()) {
            throw new InvalidShowSeatException();
@@ -149,15 +154,15 @@ public class ShowSeatServiceImpl implements ShowSeatService {
                 throw new SeatAlreadyLockedException(showSeat.getSeat().getSeatLabel());
             }
 
-            if (showSeat.isLockExpired()) {
-                showSeat.unlock();
-            }
+//            if (showSeat.isLockExpired()) {
+//                showSeat.unlock();
+//            }
 
-            if (showSeat.isLocked()) {
-                throw new SeatAlreadyLockedException(
-                        showSeat.getSeat().getSeatLabel()
-                );
-            }
+//            if (showSeat.isLocked()) {
+//                throw new SeatAlreadyLockedException(
+//                        showSeat.getSeat().getSeatLabel()
+//                );
+//            }
 
             showSeat.lock(user, lockedUntil);
 

@@ -13,5 +13,6 @@ public enum Genre {
     ROMANCE,
     SCI_FI,
     THRILLER,
-    MYTHOLOGY
+    MYTHOLOGY,
+    SUPERHERO
 }

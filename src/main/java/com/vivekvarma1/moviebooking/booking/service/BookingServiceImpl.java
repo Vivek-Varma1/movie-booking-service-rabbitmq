@@ -4,13 +4,11 @@ import com.vivekvarma1.moviebooking.booking.dto.request.CreateBookingRequest;
 import com.vivekvarma1.moviebooking.booking.dto.response.BookingResponse;
 import com.vivekvarma1.moviebooking.booking.entity.Booking;
 import com.vivekvarma1.moviebooking.booking.event.BookingConfirmedEvent;
+import com.vivekvarma1.moviebooking.booking.kafka.BookingEventProducer;
 import com.vivekvarma1.moviebooking.booking.mapper.BookingMapper;
 import com.vivekvarma1.moviebooking.booking.repository.BookingRepository;
-import com.vivekvarma1.moviebooking.common.customExceptionHandler.InvalidShowSeatException;
-import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFoundException;
-import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatAlreadyLockedException;
-import com.vivekvarma1.moviebooking.common.customExceptionHandler.SeatLockExpiredException;
-import com.vivekvarma1.moviebooking.kafka.BookingEventProducer;
+import com.vivekvarma1.moviebooking.common.customExceptionHandler.*;
+import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.BookingNotFoundException;
 import com.vivekvarma1.moviebooking.show.entity.Show;
 import com.vivekvarma1.moviebooking.show.entity.ShowSeat;
 import com.vivekvarma1.moviebooking.show.repository.ShowRepository;
@@ -20,6 +18,7 @@ import com.vivekvarma1.moviebooking.ticket.service.TicketService;
 import com.vivekvarma1.moviebooking.user.entity.User;
 import com.vivekvarma1.moviebooking.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,12 +39,12 @@ public class BookingServiceImpl implements BookingService {
     private final BookingEventProducer bookingEventProducer;
 
     @Override
-    public BookingResponse createBooking(CreateBookingRequest request) {
+    public BookingResponse createBooking(User user,CreateBookingRequest request) {
 
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User"," id : ", request.userId()));
+//        User user = userRepository.findById(request.userId())
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException(
+//                                "User"," id : ", request.userId()));
 
         Show show = showRepository.findById(request.showId())
                 .orElseThrow(() ->
@@ -65,8 +64,14 @@ public class BookingServiceImpl implements BookingService {
         }
 
         for (ShowSeat showSeat : showSeats) {
+            if (!showSeat.isLocked()) {
+                throw new SeatNotLockedException(
+                        "Seat " + showSeat.getSeat().getSeatLabel()
+                                + " must be locked before booking."
+                );
+            }
             if (showSeat.isLockExpired()) {
-                showSeat.unlock();
+//                showSeat.unlock();
                 throw new SeatLockExpiredException(
                         "Seat lock has expired."
                 );
@@ -110,18 +115,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponse confirmBooking(Long bookingId) {
+    public BookingResponse confirmBooking(Long userId,Long bookingId) {
+
 
         Booking booking = bookingRepository
                 .findWithDetailsById(bookingId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Booking", "id : " , bookingId));
+                        new BookingNotFoundException(bookingId));
+
+        if (!booking.getUser().getId().equals(userId)) {
+            throw new BookingOwnershipException();
+        }
 
         if (!booking.isPaymentStarted()) {
-            throw new IllegalStateException(
-                    "Booking is not awaiting payment confirmation."
-            );
+            throw new InvalidBookingStateException("Booking is not awaiting payment confirmation.");
         }
 
         User user = booking.getUser();
@@ -138,16 +145,19 @@ public class BookingServiceImpl implements BookingService {
 //                );
 //            }
             if (showSeat.isLockExpired()) {
-                showSeat.unlock();
+//                showSeat.unlock();
                 throw new SeatLockExpiredException(
                         showSeat.getSeat().getSeatLabel()
                 );
             }
 
+//            if (!showSeat.isLockedBy(user)) {
+//                throw new SeatAlreadyLockedException(
+//                        showSeat.getSeat().getSeatLabel()
+//                );
+//            }
             if (!showSeat.isLockedBy(user)) {
-                throw new SeatAlreadyLockedException(
-                        showSeat.getSeat().getSeatLabel()
-                );
+                throw new InvalidBookingStateException("Seat " + showSeat.getSeat().getSeatLabel() + " is no longer held by user.");
             }
             showSeat.book(user);
         }
@@ -167,7 +177,7 @@ public class BookingServiceImpl implements BookingService {
 
                         booking.getUser().getId(),
 
-                        booking.getUser().getEmailAddress(),
+                        booking.getUser().getEmail(),
 
                         booking.getUser().getName(),
 
@@ -203,11 +213,10 @@ public class BookingServiceImpl implements BookingService {
 
 
        System.out.println("Publishing event: {}"+ event);
-        bookingEventProducer.publish(event);
+        bookingEventProducer.sendBookingConfirmation(event);
 
         return bookingMapper.toResponse(booking);
     }
-
     @Override
     public BookingResponse cancelBooking(Long bookingId) {
 
@@ -215,28 +224,55 @@ public class BookingServiceImpl implements BookingService {
                 .findWithDetailsById(bookingId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Booking"," id : " , bookingId));
+                                "Booking", " id : ", bookingId));
 
         if (booking.isConfirmed()) {
-            throw new IllegalStateException(
-                    "Confirmed bookings cannot be cancelled."
-            );
+            throw new InvalidBookingStateException("Confirmed bookings cannot be cancelled .");
         }
 
+        // 1. Unlock the physical seats so others can select them
         for (var bookingSeat : booking.getBookingSeats()) {
-
             ShowSeat showSeat = bookingSeat.getShowSeat();
-
-            if (showSeat.isLocked()) {
+            if (showSeat.isLocked() || showSeat.isLockExpired()) {
                 showSeat.unlock();
             }
-
         }
 
+        // 2. Mark booking CANCELLED and deactivate BookingSeats (flips activeFlag -> NULL)
         booking.cancel();
 
         return bookingMapper.toResponse(booking);
     }
+
+//    @Override
+//    public BookingResponse cancelBooking(Long bookingId) {
+//
+//        Booking booking = bookingRepository
+//                .findWithDetailsById(bookingId)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException(
+//                                "Booking"," id : " , bookingId));
+//
+//        if (booking.isConfirmed()) {
+//            throw new IllegalStateException(
+//                    "Confirmed bookings cannot be cancelled."
+//            );
+//        }
+//
+//        for (var bookingSeat : booking.getBookingSeats()) {
+//
+//            ShowSeat showSeat = bookingSeat.getShowSeat();
+//
+//            if (showSeat.isLocked()) {
+//                showSeat.unlock();
+//            }
+//
+//        }
+//
+//        booking.cancel();
+//
+//        return bookingMapper.toResponse(booking);
+//    }
 
     @Override
     @Transactional(readOnly = true)

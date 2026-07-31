@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ScreenController {
     private final ScreenService screenService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ScreenResponse> createScreen(
             @PathVariable Long theatreId,
             @Valid @RequestBody CreateScreenRequest request
@@ -35,6 +37,7 @@ public class ScreenController {
                 );
     }
     @DeleteMapping("/{screenId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteScreen(
             @PathVariable Long theatreId,
             @PathVariable Long screenId

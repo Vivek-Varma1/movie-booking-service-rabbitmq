@@ -1,13 +1,16 @@
 package com.vivekvarma1.moviebooking.common.customExceptionHandler;
 
 import com.vivekvarma1.moviebooking.common.ApiError;
+import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.BookingNotFoundException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.MovieNotFoundException;
 import com.vivekvarma1.moviebooking.common.response.APIResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -141,23 +144,23 @@ public class MyGlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<APIResponse>
-    handleUnexpectedException(
-            Exception ex
-    ) {
-
-        ex.printStackTrace();
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(
-                        new APIResponse(
-                                "An unexpected error occurred.",
-                                false
-                        )
-                );
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<APIResponse>
+//    handleUnexpectedException(
+//            Exception ex
+//    ) {
+//
+//        ex.printStackTrace();
+//
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(
+//                        new APIResponse(
+//                                "An unexpected error occurred.",
+//                                false
+//                        )
+//                );
+//    }
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<APIResponse> handleOptimisticLock(
             ObjectOptimisticLockingFailureException ex
@@ -227,4 +230,105 @@ public class MyGlobalExceptionHandler {
                         )
                 );
     }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<APIResponse> handleEmailAlreadyExists(
+            EmailAlreadyExistsException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
+    @ExceptionHandler(PhoneNumberAlreadyExistsException.class)
+    public ResponseEntity<APIResponse> handlePhoneAlreadyExists(
+            PhoneNumberAlreadyExistsException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+
+    }
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<APIResponse> handleInvalidCredentials(
+            InvalidCredentialsException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
+    @ExceptionHandler(SeatNotLockedException.class)
+    public ResponseEntity<APIResponse> handleNotLockedException(
+            SeatNotLockedException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
+    @ExceptionHandler(BookingNotFoundException.class)
+    public ResponseEntity<APIResponse> handleNotFound(BookingNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
+
+    @ExceptionHandler(BookingOwnershipException.class)
+    public ResponseEntity<APIResponse> handleOwnership(BookingOwnershipException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(
+                        new APIResponse(
+                                ex.getMessage(),
+                                false
+                        )
+                );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<APIResponse> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(
+                        new APIResponse(
+                                "You do not have permission to perform this action",
+                                false
+                        )
+                );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<APIResponse> handleGeneric(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        new APIResponse(
+                                "Something went wrong",
+                                false
+                        )
+                );
+    }
+
 }

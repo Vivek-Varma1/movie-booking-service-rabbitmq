@@ -4,11 +4,13 @@ import com.vivekvarma1.moviebooking.booking.dto.request.CreateBookingRequest;
 import com.vivekvarma1.moviebooking.booking.dto.response.BookingResponse;
 import com.vivekvarma1.moviebooking.booking.service.BookingService;
 import com.vivekvarma1.moviebooking.ticket.service.TicketService;
+import com.vivekvarma1.moviebooking.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,16 +26,18 @@ public class BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingResponse createBooking(
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid CreateBookingRequest request
     ) {
-        return bookingService.createBooking(request);
+        return bookingService.createBooking(user,request);
     }
 
     @PostMapping("/{bookingId}/confirm")
     public BookingResponse confirmBooking(
+            @AuthenticationPrincipal User user,
             @PathVariable Long bookingId
     ) {
-        return bookingService.confirmBooking(bookingId);
+        return bookingService.confirmBooking(user.getId(), bookingId);
     }
 
     @PostMapping("/{bookingId}/cancel")
@@ -63,11 +67,14 @@ public class BookingController {
 
     }
 
-    @GetMapping("/users/{userId}")
-    public List<BookingResponse> getBookingsByUser(
-            @PathVariable Long userId
+    @GetMapping("/me")
+    public ResponseEntity<List<BookingResponse>> myBookings(
+            @AuthenticationPrincipal User user
     ) {
-        return bookingService.getUserBookings(userId);
+
+        return ResponseEntity.ok(
+                bookingService.getUserBookings(user.getId())
+        );
     }
 
 }

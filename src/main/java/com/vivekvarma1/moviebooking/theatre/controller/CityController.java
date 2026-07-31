@@ -6,6 +6,7 @@ import com.vivekvarma1.moviebooking.theatre.dto.response.CityResponse;
 import com.vivekvarma1.moviebooking.theatre.service.CityServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class CityController {
     private final CityServiceImpl cityService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public CityResponse create(
             @RequestBody
             @Valid
@@ -32,6 +34,7 @@ public class CityController {
     }
 
     @PostMapping("/bulk")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CityResponse> createBulk(
             @RequestBody
             @Valid
