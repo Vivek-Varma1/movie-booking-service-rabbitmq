@@ -31,6 +31,6 @@ public class Ticket {
     private LocalDateTime issuedAt;
 
     @Lob
-    @Column(name = "qr_code", columnDefinition = "LONGBLOB")
+    @Column(name = "qr_code")
     private byte[] qrCode;
 }
