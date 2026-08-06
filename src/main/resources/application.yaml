@@ -54,7 +54,7 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
 server:
-  port: 8080
+  port: ${PORT:8080}
   tomcat:
     threads:
       max: 400
