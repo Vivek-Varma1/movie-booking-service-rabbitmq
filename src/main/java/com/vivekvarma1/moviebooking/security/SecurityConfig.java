@@ -107,7 +107,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://movie-booking-frontend-ten.vercel.app"
+                "https://cineverse-booking.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of(
