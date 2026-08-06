@@ -47,7 +47,7 @@ spring:
       request-timeout: 10000ms
   data:
     redis:
-          url:${REDIS_URL}
+      url: ${REDIS_URL}
 
 logging:
   level:
