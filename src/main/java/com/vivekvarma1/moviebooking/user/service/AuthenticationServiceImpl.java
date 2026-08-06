@@ -4,7 +4,7 @@ import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFou
 import com.vivekvarma1.moviebooking.security.cookie.CookieService;
 import com.vivekvarma1.moviebooking.security.jwt.JwtService;
 import com.vivekvarma1.moviebooking.user.entity.User;
-import com.vivekvarma1.moviebooking.user.kafka.OtpKafkaProducer;
+import com.vivekvarma1.moviebooking.user.kafka.OtpEmailClientService;
 import com.vivekvarma1.moviebooking.user.mapper.UserMapper;
 import com.vivekvarma1.moviebooking.user.repository.UserRepository;
 import com.vivekvarma1.moviebooking.user.request.SendOtpRequest;
@@ -25,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final OtpRedisStorageService otpRedisStorageService;
-    private final OtpKafkaProducer otpKafkaProducer;
+    private final OtpEmailClientService otpEmailClientService;
     private final JwtService jwtService;
     private final CookieService cookieService;
 
@@ -33,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public MessageResponse sendOtp(SendOtpRequest request) {
         String email = request.email();
         String otp = otpRedisStorageService.generateAndSaveOtp(email);
-        otpKafkaProducer.sendOtpEvent(email, otp);
+        otpEmailClientService.sendOtp(email, otp);
         return new MessageResponse("OTP code sent successfully to " + email);
     }
 

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class MovieController {
      */
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponse> createMovie(
             @Valid @RequestBody CreateMovieRequest request
     ) {
@@ -36,6 +38,7 @@ public class MovieController {
     }
 
     @PatchMapping("/{movieId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponse> updateMovie(
             @PathVariable Long movieId,
             @Valid @RequestBody UpdateMovieRequest request
@@ -49,6 +52,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{movieId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMovie(
             @PathVariable Long movieId
     ) {

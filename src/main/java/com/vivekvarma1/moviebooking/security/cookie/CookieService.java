@@ -25,7 +25,7 @@ public class CookieService {
         cookie.setHttpOnly(true);
 
         // Change to true in production (HTTPS)
-        cookie.setSecure(false);
+        cookie.setSecure(true);
 
         cookie.setPath("/");
 

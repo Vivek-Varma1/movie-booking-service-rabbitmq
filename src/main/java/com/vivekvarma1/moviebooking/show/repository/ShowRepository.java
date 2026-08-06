@@ -22,7 +22,26 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
 
     List<Show> findAllByMovie(Movie movie);
 
-    @Query("""
+    List<Show>findByShowDateGreaterThanEqual(LocalDate showDateIsGreaterThan);
+
+    List<Show>findByShowDateAfter(LocalDate showDateIsGreaterThan);
+
+//    @Query("""
+//select distinct s.showDate
+//from Show s
+//join s.screen sc
+//join sc.theatre t
+//where s.movie.id = :movieId
+//and t.city.id = :cityId
+//and s.status =
+//com.vivekvarma1.moviebooking.show.entity.ShowStatus.OPEN_FOR_BOOKING
+//order by s.showDate
+//""")
+//    List<LocalDate> findAvailableDates(
+//            @Param("movieId") Long movieId,
+//            @Param("cityId") Long cityId
+//    );
+@Query("""
 select distinct s.showDate
 from Show s
 join s.screen sc
@@ -31,12 +50,14 @@ where s.movie.id = :movieId
 and t.city.id = :cityId
 and s.status =
 com.vivekvarma1.moviebooking.show.entity.ShowStatus.OPEN_FOR_BOOKING
+and s.showDate >= :today
 order by s.showDate
 """)
-    List<LocalDate> findAvailableDates(
-            @Param("movieId") Long movieId,
-            @Param("cityId") Long cityId
-    );
+List<LocalDate> findAvailableDates(
+        @Param("movieId") Long movieId,
+        @Param("cityId") Long cityId,
+        @Param("today") LocalDate today
+);
     @Query("""
 select distinct s
 from Show s

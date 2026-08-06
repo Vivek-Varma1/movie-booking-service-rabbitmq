@@ -18,7 +18,6 @@ import com.vivekvarma1.moviebooking.ticket.service.TicketService;
 import com.vivekvarma1.moviebooking.user.entity.User;
 import com.vivekvarma1.moviebooking.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -213,7 +212,7 @@ public class BookingServiceImpl implements BookingService {
 
 
        System.out.println("Publishing event: {}"+ event);
-        bookingEventProducer.sendBookingConfirmation(event);
+        bookingEventProducer.publish(event);
 
         return bookingMapper.toResponse(booking);
     }

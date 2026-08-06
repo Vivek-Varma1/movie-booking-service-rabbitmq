@@ -78,7 +78,8 @@ public class MovieServiceImpl implements MovieService{
 
         return showRepository.findAvailableDates(
                 movieId,
-                cityId
+                cityId,
+                LocalDate.now()
         );
     }
 

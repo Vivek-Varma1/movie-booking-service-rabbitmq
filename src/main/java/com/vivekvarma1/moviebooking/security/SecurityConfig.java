@@ -77,6 +77,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.PATCH, "/api/movies/**")
                         .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/cities/**").permitAll()
                         // Everything else requires login
                         .anyRequest()
                         .authenticated()
@@ -89,17 +90,36 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
-        );
+//        configuration.setAllowedOrigins(
+//                List.of("http://localhost:5173")
+//        );
+//        configuration.setAllowedOriginPatterns(List.of("*"));
+//
+//        configuration.setAllowedMethods(
+//                List.of("*")
+//        );
+//
+//        configuration.setAllowedHeaders(
+//                List.of("*")
+//        );
+//
+//        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://movie-booking-frontend-ten.vercel.app"
+        ));
 
-        configuration.setAllowedMethods(
-                List.of("*")
-        );
+        configuration.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+        ));
 
-        configuration.setAllowedHeaders(
-                List.of("*")
-        );
+        configuration.setAllowedHeaders(List.of("*"));
 
         configuration.setAllowCredentials(true);
 

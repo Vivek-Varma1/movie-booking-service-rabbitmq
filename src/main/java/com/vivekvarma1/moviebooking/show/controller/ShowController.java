@@ -20,13 +20,13 @@ public class ShowController {
     private final ShowService showService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ShowResponse> createShow(
             @Valid
             @RequestBody
             CreateShowRequest request
     ) {
-
+        System.out.println("CONTROLLER HIT");
         ShowResponse response =
                 showService.createShow(request);
 

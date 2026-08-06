@@ -1,6 +1,6 @@
 package com.vivekvarma1.moviebooking.user.event;
 
-public record OtpEvent(
+public record OtpRequest(
         String email,
         String otpCode
 ) {}

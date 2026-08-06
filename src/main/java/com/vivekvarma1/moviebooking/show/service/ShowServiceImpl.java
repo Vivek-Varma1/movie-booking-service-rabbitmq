@@ -15,15 +15,18 @@ import com.vivekvarma1.moviebooking.theatre.entity.Screen;
 import com.vivekvarma1.moviebooking.theatre.entity.Seat;
 import com.vivekvarma1.moviebooking.theatre.repository.ScreenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ShowServiceImpl implements ShowService {
 
     private final ShowRepository showRepository;
@@ -33,7 +36,7 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public ShowResponse createShow(CreateShowRequest request) {
-
+        System.out.println("========== CREATE SHOW ==========");
         Movie movie = movieRepository.findById(request.movieId())
                 .orElseThrow(() ->
                         new MovieNotFoundException(
@@ -109,8 +112,8 @@ public class ShowServiceImpl implements ShowService {
     @Transactional(readOnly = true)
     @Override
     public List<ShowResponse> getAllShows() {
-
-        return showRepository.findAll()
+        log.info("Today = {}", LocalDate.now());
+        return showRepository.findByShowDateAfter(LocalDate.now())
                 .stream()
                 .map(showMapper::toResponse)
                 .toList();
