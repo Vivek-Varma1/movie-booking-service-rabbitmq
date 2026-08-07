@@ -62,7 +62,8 @@ public class SecurityConfig {
                         // Public APIs
                         .requestMatchers(HttpMethod.GET,
                                 "/api/movies/**",
-                                "/api/shows/**"
+                                "/api/shows/**",
+                                "/ping"
                         ).permitAll()
 
                         // Admin APIs

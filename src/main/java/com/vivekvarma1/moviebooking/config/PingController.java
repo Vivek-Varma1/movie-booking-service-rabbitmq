@@ -1,14 +1,14 @@
-package com.vivekvarma1.moviebooking.config;
+    package com.vivekvarma1.moviebooking.config;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class PingController {
+    @RestController
+    public class PingController {
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok("PONG");
+        @GetMapping("/ping")
+        public ResponseEntity<String> ping() {
+            return ResponseEntity.ok("PONG");
+        }
     }
-}
