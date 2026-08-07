@@ -48,7 +48,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-
+                        .requestMatchers("/ping").permitAll()
                         // Authentication APIs
                         .requestMatchers("/api/auth/**","/api/tickets/**").permitAll()
 
