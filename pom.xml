@@ -93,6 +93,12 @@
 <!--			<version>3.5.3</version>-->
 <!--		</dependency>-->
 
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.38.0</version>
+		</dependency>
+
 		<!-- Source: https://mvnrepository.com/artifact/com.google.zxing/core -->
 		<dependency>
 			<groupId>com.google.zxing</groupId>

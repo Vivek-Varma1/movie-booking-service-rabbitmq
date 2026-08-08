@@ -20,7 +20,7 @@ public class ShowController {
     private final ShowService showService;
 
     @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ShowResponse> createShow(
             @Valid
             @RequestBody

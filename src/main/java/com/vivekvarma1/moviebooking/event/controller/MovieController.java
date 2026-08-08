@@ -10,9 +10,11 @@ import com.vivekvarma1.moviebooking.event.serivce.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,30 +29,51 @@ public class MovieController {
      * Admin APIs
      */
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MovieResponse> createMovie(
-            @Valid @RequestBody CreateMovieRequest request
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(movieService.createMovie(request));
-    }
+//    @PostMapping
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<MovieResponse> createMovie(
+//            @Valid @RequestBody CreateMovieRequest request
+//    ) {
+//        return ResponseEntity
+//                .status(HttpStatus.CREATED)
+//                .body(movieService.createMovie(request));
+//    }
+//
+//    @PatchMapping("/{movieId}")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<MovieResponse> updateMovie(
+//            @PathVariable Long movieId,
+//            @Valid @RequestBody UpdateMovieRequest request
+//    ) {
+//        return ResponseEntity.ok(
+//                movieService.updateMovie(
+//                        movieId,
+//                        request
+//                )
+//        );
+//    }
+@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+@PreAuthorize("hasRole('ADMIN')")
+public ResponseEntity<MovieResponse> createMovie(
+        @RequestPart("request") @Valid CreateMovieRequest request,
+        @RequestPart("poster") MultipartFile posterFile
+) {
+    return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(movieService.createMovie(request, posterFile));
+}
 
-    @PatchMapping("/{movieId}")
+    @PatchMapping(value = "/{movieId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponse> updateMovie(
             @PathVariable Long movieId,
-            @Valid @RequestBody UpdateMovieRequest request
+            @RequestPart(value = "request", required = false) @Valid UpdateMovieRequest request,
+            @RequestPart(value = "poster", required = false) MultipartFile posterFile
     ) {
         return ResponseEntity.ok(
-                movieService.updateMovie(
-                        movieId,
-                        request
-                )
+                movieService.updateMovie(movieId, request, posterFile)
         );
     }
-
     @DeleteMapping("/{movieId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteMovie(

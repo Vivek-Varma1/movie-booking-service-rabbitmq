@@ -5,18 +5,21 @@ import com.vivekvarma1.moviebooking.event.request.UpdateMovieRequest;
 import com.vivekvarma1.moviebooking.event.response.MovieDateShowsResponse;
 import com.vivekvarma1.moviebooking.event.response.MovieResponse;
 import com.vivekvarma1.moviebooking.event.response.MovieSummaryResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 public interface MovieService {
 
     MovieResponse createMovie(
-            CreateMovieRequest request
+            CreateMovieRequest request,
+            MultipartFile posterFile
     );
 
     MovieResponse updateMovie(
             Long movieId,
-            UpdateMovieRequest request
+            UpdateMovieRequest request,
+            MultipartFile posterFile
     );
 
     void deleteMovie(

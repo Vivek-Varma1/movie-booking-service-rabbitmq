@@ -38,9 +38,6 @@ public record CreateMovieRequest(
         LocalDate releaseDate,
 
         @Size(max = 1000)
-        String posterUrl,
-
-        @Size(max = 1000)
         String trailerUrl,
 
         @Size(max = 2000)

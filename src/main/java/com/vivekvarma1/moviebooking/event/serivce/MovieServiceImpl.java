@@ -19,6 +19,7 @@ import com.vivekvarma1.moviebooking.theatre.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,36 +34,61 @@ public class MovieServiceImpl implements MovieService{
     private final MovieMapper movieMapper;
     private final ShowMapper showMapper;
     private final CityRepository cityRepository;
+    private final CloudinaryService cloudinaryService;
 
 
 
-
+    private static final String POSTER_FOLDER = "movies/posters";
 
     @Transactional
     @Override
-    public MovieResponse createMovie(CreateMovieRequest request) {
+    public MovieResponse createMovie(CreateMovieRequest request, MultipartFile posterFile) {
 
-        if (movieRepository
-                .existsByMovieNameIgnoreCaseAndLanguage(
-                        request.movieName(),
-                        request.language()
-                )) {
-
+        if (movieRepository.existsByMovieNameIgnoreCaseAndLanguage(
+                request.movieName(),
+                request.language()
+        )) {
             throw new ResourceAlreadyExistsException(
-                    "Movie already exists with name '" +
-                            request.movieName() +
-                            "' and language '" +
-                            request.language() +
-                            "'"
+                    "Movie already exists with name '" + request.movieName() +
+                            "' and language '" + request.language() + "'"
             );
         }
 
+        // 1. Map request to Entity
         Movie movie = movieMapper.toEntity(request);
 
-        Movie savedMovie =
-                movieRepository.save(movie);
+        // 2. Upload image to Cloudinary and set URL
+        if (posterFile != null && !posterFile.isEmpty()) {
+            String uploadedPosterUrl = cloudinaryService.uploadImage(posterFile, POSTER_FOLDER);
+            movie.setPosterUrl(uploadedPosterUrl);
+        }
+
+        // 3. Save entity
+        Movie savedMovie = movieRepository.save(movie);
 
         return movieMapper.toResponse(savedMovie);
+    }
+
+    @Transactional
+    @Override
+    public MovieResponse updateMovie(Long id, UpdateMovieRequest request, MultipartFile posterFile) {
+
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new MovieNotFoundException(id));
+
+        if (request != null) {
+            movieMapper.updateMovieFromRequest(request, movie);
+        }
+
+        // If a new poster image is supplied, upload and update posterUrl
+        if (posterFile != null && !posterFile.isEmpty()) {
+            String uploadedPosterUrl = cloudinaryService.uploadImage(posterFile, POSTER_FOLDER);
+            movie.setPosterUrl(uploadedPosterUrl);
+        }
+
+        Movie updatedMovie = movieRepository.save(movie);
+
+        return movieMapper.toResponse(updatedMovie);
     }
 
     @Override
@@ -184,30 +210,30 @@ public MovieResponse createMovie(CreateMovieRequest request) {
 }
      */
 
-    @Transactional
-    @Override
-    public MovieResponse updateMovie(
-            Long id,
-            UpdateMovieRequest request
-    ) {
-
-        Movie movie =
-                movieRepository.findById(id)
-                        .orElseThrow(() ->
-                                new MovieNotFoundException(id));
-
-        movieMapper.updateMovieFromRequest(
-                request,
-                movie
-        );
-
-        Movie updatedMovie =
-                movieRepository.save(movie);
-
-        return movieMapper.toResponse(
-                updatedMovie
-        );
-    }
+//    @Transactional
+//    @Override
+//    public MovieResponse updateMovie(
+//            Long id,
+//            UpdateMovieRequest request
+//    ) {
+//
+//        Movie movie =
+//                movieRepository.findById(id)
+//                        .orElseThrow(() ->
+//                                new MovieNotFoundException(id));
+//
+//        movieMapper.updateMovieFromRequest(
+//                request,
+//                movie
+//        );
+//
+//        Movie updatedMovie =
+//                movieRepository.save(movie);
+//
+//        return movieMapper.toResponse(
+//                updatedMovie
+//        );
+//    }
 
     @Transactional(readOnly = true)
     @Override
