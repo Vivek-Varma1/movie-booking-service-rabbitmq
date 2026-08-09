@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,46 +18,32 @@ public class CookieService {
             HttpServletResponse response,
             String token
     ) {
+        ResponseCookie cookie = ResponseCookie.from(CookieConstants.ACCESS_TOKEN, token)
+                .httpOnly(true)
+                .secure(true)         // Mandatory when SameSite=None
+                .sameSite("None")     // Allows cross-site cookie transmission
+                .path("/")
+                .maxAge(jwtExpiration / 1000)
+                .build();
 
-        Cookie cookie = new Cookie(
-                CookieConstants.ACCESS_TOKEN,
-                token
-        );
-
-        cookie.setHttpOnly(true);
-
-        // Change to true in production (HTTPS)
-        cookie.setSecure(true);
-
-        cookie.setPath("/");
-
-        cookie.setMaxAge((int) (jwtExpiration / 1000));
-
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void clearAccessTokenCookie(
             HttpServletResponse response
     ) {
+        ResponseCookie cookie = ResponseCookie.from(CookieConstants.ACCESS_TOKEN, "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        Cookie cookie = new Cookie(
-                CookieConstants.ACCESS_TOKEN,
-                ""
-        );
-
-        cookie.setHttpOnly(true);
-
-        cookie.setSecure(false);
-
-        cookie.setPath("/");
-
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public String getAccessToken(HttpServletRequest request) {
-
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
@@ -63,7 +51,6 @@ public class CookieService {
         }
 
         for (Cookie cookie : cookies) {
-
             if (CookieConstants.ACCESS_TOKEN.equals(cookie.getName())) {
                 return cookie.getValue();
             }
