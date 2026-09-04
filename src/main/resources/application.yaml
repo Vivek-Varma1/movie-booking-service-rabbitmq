@@ -7,12 +7,12 @@ spring:
     #driver-class-name: com.mysql.cj.jdbc.Driver
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 30
-      minimum-idle: 10
-      connection-timeout: 10000
-      idle-timeout: 300000
-        # Maximum lifetime of a connection in the pool in milliseconds
+      maximum-pool-size: 10          # 30 was way oversized for your traffic — smaller pool = fewer connections to spin up/down
+      minimum-idle: 0                # THE FIX — don't force-hold connections open; let the pool shrink to 0 so Neon can autosuspend
+      connection-timeout: 15000      # a bit more headroom for Neon's cold wake-up (~1-2s) under load
+      idle-timeout: 120000           # close unused connections after 2 min idle
       max-lifetime: 1800000
+      initialization-fail-timeout: 20000   # retry initial connect instead of crashing boot if Neon is still waking up
       pool-name: HikariCP-SeatBookingPool
 
   rabbitmq:
@@ -23,6 +23,7 @@ spring:
 
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
 
@@ -41,7 +42,7 @@ spring:
         order_inserts: true
         order_updates: true
         batch_versioned_data: true
-        generate_statistics: true
+        generate_statistics: false
   mvc:
     async:
       request-timeout: 10000ms
@@ -51,14 +52,14 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.SQL: INFO
+    # org.hibernate.orm.jdbc.bind: TRACE
 server:
   port: ${PORT:8080}
   tomcat:
     threads:
-      max: 400
-      min-spare: 50
+      max: 200
+      min-spare: 20
     connection-timeout: 20000ms
     accept-count: 500
 
@@ -72,3 +73,8 @@ cloudinary:
   cloud-name: ${CLOUD_NAME}
   api-key: ${API_KEY}
   api-secret: ${API_SECRET}
+  
+management:
+  health:
+    db:
+      enabled: false
