@@ -3,6 +3,9 @@ package com.vivekvarma1.moviebooking.theatre.service;
 
 import com.vivekvarma1.moviebooking.theatre.dto.request.CreateTheatreRequest;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreResponse;
+import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreSummaryResponse;
+
+import java.util.List;
 
 public interface TheatreService {
 
@@ -13,4 +16,5 @@ public interface TheatreService {
     TheatreResponse getTheatre(
             Long theatreId
     );
+    List<TheatreSummaryResponse> getAllTheatres();
 }

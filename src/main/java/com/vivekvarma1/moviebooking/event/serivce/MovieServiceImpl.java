@@ -69,6 +69,14 @@ public class MovieServiceImpl implements MovieService{
         return movieMapper.toResponse(savedMovie);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<MovieResponse> getAllMoviesForAdmin() {
+        return movieRepository.findAll().stream()
+                .map(movieMapper::toResponse)
+                .toList();
+    }
+
     @Transactional
     @Override
     public MovieResponse updateMovie(Long id, UpdateMovieRequest request, MultipartFile posterFile) {

@@ -8,6 +8,7 @@ import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFou
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.TheatreNotFoundException;
 import com.vivekvarma1.moviebooking.theatre.dto.request.CreateTheatreRequest;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreResponse;
+import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreSummaryResponse;
 import com.vivekvarma1.moviebooking.theatre.entity.City;
 import com.vivekvarma1.moviebooking.theatre.entity.Theatre;
 import com.vivekvarma1.moviebooking.theatre.mapper.TheatreMapper;
@@ -16,6 +17,8 @@ import com.vivekvarma1.moviebooking.theatre.repository.TheatreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -123,5 +126,17 @@ public class TheatreServiceImpl implements TheatreService {
 
         return theatreMapper.toResponse(theatre);
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public List<TheatreSummaryResponse> getAllTheatres() {
+        return theatreRepository.findAll().stream()
+                .map(theatre -> new TheatreSummaryResponse(
+                        theatre.getId(),
+                        theatre.getName(),
+                        theatre.getAddress(),
+                        theatre.getCity().getId(),
+                        theatre.getCity().getName()
+                ))
+                .toList();
+    }
 }

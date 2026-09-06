@@ -2,6 +2,7 @@ package com.vivekvarma1.moviebooking.theatre.controller;
 
 import com.vivekvarma1.moviebooking.theatre.dto.request.CreateTheatreRequest;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreResponse;
+import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreSummaryResponse;
 import com.vivekvarma1.moviebooking.theatre.service.ScreenService;
 import com.vivekvarma1.moviebooking.theatre.service.TheatreService;
 import jakarta.validation.Valid;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/theatres")
@@ -39,7 +42,10 @@ public class TheatreController {
                 theatreService.getTheatre(theatreId)
         );
     }
-
+    @GetMapping
+    public ResponseEntity<List<TheatreSummaryResponse>> getAllTheatres() {
+        return ResponseEntity.ok(theatreService.getAllTheatres());
+    }
 //    @PostMapping("/{theatreId}/screens")
 //    public ResponseEntity<ScreenResponse> createScreen(
 //            @PathVariable Long theatreId,

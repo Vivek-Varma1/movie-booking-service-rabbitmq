@@ -65,6 +65,12 @@ public ResponseEntity<MovieResponse> createMovie(
             .body(movieService.createMovie(request, posterFile));
 }
 
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<MovieResponse>> getAllMoviesForAdmin() {
+        return ResponseEntity.ok(movieService.getAllMoviesForAdmin());
+    }
+
     @PatchMapping(value = "/{movieId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MovieResponse> updateMovie(
