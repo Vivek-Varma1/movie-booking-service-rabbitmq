@@ -20,4 +20,5 @@ public interface CityRepository
     List<City> findByNameIn(
             List<String> names
     );
+    
 }

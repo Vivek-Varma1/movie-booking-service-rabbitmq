@@ -21,4 +21,5 @@ boolean existsByNameIgnoreCaseAndCityId(
     List<Theatre> findByCityIgnoreCase(
             City city
     );
+    boolean existsByCityId(Long cityId);
 }

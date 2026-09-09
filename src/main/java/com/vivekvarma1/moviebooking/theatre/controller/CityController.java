@@ -6,6 +6,7 @@ import com.vivekvarma1.moviebooking.theatre.dto.response.CityResponse;
 import com.vivekvarma1.moviebooking.theatre.service.CityServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,20 @@ public class CityController {
             CreateCitiesRequest request
     ) {
         return cityService.createBulk(request);
+    }
+    @PutMapping("/{cityId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public CityResponse update(
+            @PathVariable Long cityId,
+            @Valid @RequestBody CreateCityRequest request
+    ) {
+        return cityService.update(cityId, request);
+    }
+
+    @DeleteMapping("/{cityId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long cityId) {
+        cityService.delete(cityId);
+        return ResponseEntity.noContent().build();
     }
 }

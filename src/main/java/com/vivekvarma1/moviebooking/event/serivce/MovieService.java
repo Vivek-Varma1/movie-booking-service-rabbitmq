@@ -21,6 +21,7 @@ public interface MovieService {
             UpdateMovieRequest request,
             MultipartFile posterFile
     );
+    List<MovieResponse> getAllMoviesForAdmin();
 
     void deleteMovie(
             Long movieId

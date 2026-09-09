@@ -30,4 +30,10 @@ public class City {
     public City(String name) {
         this.name = name.trim();
     }
+
+    public void rename(String name) {
+        this.name = name.trim();
+    }
+
+
 }

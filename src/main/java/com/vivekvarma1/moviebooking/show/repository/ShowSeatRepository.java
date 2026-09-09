@@ -30,24 +30,24 @@ public interface ShowSeatRepository
             Long showId
     );
 
-    Optional<ShowSeat> findByShowIdAndSeatId(
-            Long showId,
-            Long seatId
-    );
+//    Optional<ShowSeat> findByShowIdAndSeatId(
+//            Long showId,
+//            Long seatId
+//    );
 
-    List<ShowSeat> findByShowId(Long showId);
+//    List<ShowSeat> findByShowId(Long showId);
+//
+//    List<ShowSeat> findAllByIdIn(
+//            List<Long> ids
+//    );
 
-    List<ShowSeat> findAllByIdIn(
-            List<Long> ids
-    );
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("""
-        select ss
-        from ShowSeat ss
-        where ss.id = :id
-    """)
-    Optional<ShowSeat> lockById(Long id);
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Query("""
+//        select ss
+//        from ShowSeat ss
+//        where ss.id = :id
+//    """)
+//    Optional<ShowSeat> lockById(Long id);
 
     @Query("""
     select ss

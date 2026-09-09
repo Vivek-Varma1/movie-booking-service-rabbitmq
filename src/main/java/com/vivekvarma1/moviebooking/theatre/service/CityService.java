@@ -17,4 +17,6 @@ public interface CityService {
     );
 
     List<CityResponse> getAll();
+    CityResponse update(Long id, CreateCityRequest request);
+    void delete(Long id);
 }
