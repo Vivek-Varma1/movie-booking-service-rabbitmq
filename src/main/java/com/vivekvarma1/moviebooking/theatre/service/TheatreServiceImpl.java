@@ -7,6 +7,7 @@ import com.vivekvarma1.moviebooking.common.customExceptionHandler.ResourceNotFou
 
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.TheatreNotFoundException;
 import com.vivekvarma1.moviebooking.theatre.dto.request.CreateTheatreRequest;
+import com.vivekvarma1.moviebooking.theatre.dto.request.UpdateTheatreRequest;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreResponse;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreSummaryResponse;
 import com.vivekvarma1.moviebooking.theatre.entity.City;
@@ -138,5 +139,38 @@ public class TheatreServiceImpl implements TheatreService {
                         theatre.getCity().getName()
                 ))
                 .toList();
+    }
+    @Override
+    @Transactional
+    public TheatreResponse updateTheatre(Long theatreId, UpdateTheatreRequest request) {
+        Theatre theatre = theatreRepository.findById(theatreId)
+                .orElseThrow(() -> new ResourceNotFoundException("Theatre", "theatreId", theatreId));
+
+        City city = cityRepository.findById(request.cityId())
+                .orElseThrow(() -> new ResourceNotFoundException("City", "cityId", request.cityId()));
+
+        theatre.updateDetails(request.name(), request.address(), city);
+        // ^ add this method to Theatre entity if it doesn't have one - simple
+        // setters for name/address/city, called together so there's one
+        // entry point for updates (same pattern as Booking's state methods)
+
+        Theatre saved = theatreRepository.save(theatre);
+        return theatreMapper.toResponse(saved); // or however TheatreResponse is built elsewhere
+    }
+
+    @Override
+    @Transactional
+    public void deleteTheatre(Long theatreId) {
+        Theatre theatre = theatreRepository.findById(theatreId)
+                .orElseThrow(() -> new ResourceNotFoundException("Theatre", "theatreId", theatreId));
+
+        if (screenRepository.existsByTheatre_Id(theatreId)) {
+            throw new IllegalStateException(
+                    "Cannot delete theatre '" + theatre.getName()
+                            + "' - it still has screens. Remove those screens first."
+            );
+        }
+
+        theatreRepository.delete(theatre);
     }
 }

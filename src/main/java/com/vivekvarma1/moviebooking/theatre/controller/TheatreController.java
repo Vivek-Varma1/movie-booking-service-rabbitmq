@@ -1,6 +1,7 @@
 package com.vivekvarma1.moviebooking.theatre.controller;
 
 import com.vivekvarma1.moviebooking.theatre.dto.request.CreateTheatreRequest;
+import com.vivekvarma1.moviebooking.theatre.dto.request.UpdateTheatreRequest;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreResponse;
 import com.vivekvarma1.moviebooking.theatre.dto.response.TheatreSummaryResponse;
 import com.vivekvarma1.moviebooking.theatre.service.ScreenService;
@@ -45,6 +46,21 @@ public class TheatreController {
     @GetMapping
     public ResponseEntity<List<TheatreSummaryResponse>> getAllTheatres() {
         return ResponseEntity.ok(theatreService.getAllTheatres());
+    }
+    @PutMapping("/{theatreId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<TheatreResponse> updateTheatre(
+            @PathVariable Long theatreId,
+            @Valid @RequestBody UpdateTheatreRequest request
+    ) {
+        return ResponseEntity.ok(theatreService.updateTheatre(theatreId, request));
+    }
+
+    @DeleteMapping("/{theatreId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteTheatre(@PathVariable Long theatreId) {
+        theatreService.deleteTheatre(theatreId);
+        return ResponseEntity.noContent().build();
     }
 //    @PostMapping("/{theatreId}/screens")
 //    public ResponseEntity<ScreenResponse> createScreen(

@@ -2,6 +2,7 @@ package com.vivekvarma1.moviebooking.theatre.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -95,5 +96,13 @@ public class Theatre {
 
     public void changeCity(City city) {
         this.city = city;
+    }
+
+    public void updateDetails(@NotBlank @Size(max = 100) String name,
+                              @NotBlank @Size(max = 255) String address,
+                              City city) {
+        this.name=name.trim();
+        this.address=address;
+        this.city=city;
     }
 }
