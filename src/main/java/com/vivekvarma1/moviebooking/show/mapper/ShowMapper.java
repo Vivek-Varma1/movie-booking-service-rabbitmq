@@ -45,5 +45,9 @@ public interface ShowMapper {
             target = "showSlot",
             source = "showSlot"
     )
+    @Mapping(target = "theatreId", source = "screen.theatre.id")
+    @Mapping(target = "theatreName", source = "screen.theatre.name")
+    @Mapping(target = "movieId", source = "movie.id")
+    @Mapping(target = "movieName", source = "movie.movieName")
     ShowResponse toResponse(Show show);
 }

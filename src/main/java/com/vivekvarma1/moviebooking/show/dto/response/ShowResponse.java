@@ -27,7 +27,10 @@ public class ShowResponse {
     private Long screenId;
 
     private String screenName;
-
+    private Long theatreId;
+    private String theatreName;
+    private Long movieId;
+    private String movieName;
     private Integer availableSeats;
 
     private Integer totalSeats;
