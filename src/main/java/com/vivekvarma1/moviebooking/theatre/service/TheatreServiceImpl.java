@@ -14,6 +14,7 @@ import com.vivekvarma1.moviebooking.theatre.entity.City;
 import com.vivekvarma1.moviebooking.theatre.entity.Theatre;
 import com.vivekvarma1.moviebooking.theatre.mapper.TheatreMapper;
 import com.vivekvarma1.moviebooking.theatre.repository.CityRepository;
+import com.vivekvarma1.moviebooking.theatre.repository.ScreenRepository;
 import com.vivekvarma1.moviebooking.theatre.repository.TheatreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class TheatreServiceImpl implements TheatreService {
     private final TheatreRepository theatreRepository;
     private final TheatreMapper theatreMapper;
     private final CityRepository cityRepository;
+    private final ScreenRepository screenRepository;
 
     @Override
     public TheatreResponse createTheatre(

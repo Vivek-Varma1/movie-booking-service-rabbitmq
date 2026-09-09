@@ -7,6 +7,7 @@ import com.vivekvarma1.moviebooking.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +32,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
 
     @GetMapping
-@PreAuthorize("hasRole('ADMIN')")   // <-- add this line
+@PreAuthorize("hasRole('ADMIN')")
 public ResponseEntity<List<UserResponse>> getAllUsers() {
     return ResponseEntity.ok(userService.getAllUsers());
 }

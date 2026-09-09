@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface ScreenRepository extends JpaRepository<Screen, Long> {
-//    List<Screen> findByTheatreId(Long theatreId);
+    List<Screen> findByTheatreId(Long theatreId);
 
     List<Screen> findByTheatreIdOrderByNameAsc(
             Long theatreId
@@ -20,4 +20,5 @@ public interface ScreenRepository extends JpaRepository<Screen, Long> {
             Long screenId,
             Long theatreId
     );
+    boolean existsByTheatre_Id(Long theatreId);
 }
