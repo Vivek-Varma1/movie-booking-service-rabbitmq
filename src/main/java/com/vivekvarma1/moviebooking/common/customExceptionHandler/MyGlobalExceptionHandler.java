@@ -1,5 +1,6 @@
 package com.vivekvarma1.moviebooking.common.customExceptionHandler;
 
+import com.razorpay.RazorpayException;
 import com.vivekvarma1.moviebooking.common.ApiError;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.BookingNotFoundException;
 import com.vivekvarma1.moviebooking.common.customExceptionHandler.resourceNotFoundException.MovieNotFoundException;
@@ -330,6 +331,12 @@ public class MyGlobalExceptionHandler {
                                 false
                         )
                 );
+    }
+    @ExceptionHandler(RazorpayException.class)
+    public ResponseEntity<APIResponse> handleRazorpayException(RazorpayException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new APIResponse("Payment verification failed: " + ex.getMessage(), false));
     }
 
 }
