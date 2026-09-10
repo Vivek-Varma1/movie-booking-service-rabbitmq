@@ -1,6 +1,7 @@
 package com.vivekvarma1.moviebooking.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -20,7 +21,14 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    MessageConverter jsonConverter(ObjectMapper objectMapper) {
-        return new Jackson2JsonMessageConverter(objectMapper);
+    ObjectMapper rabbitObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    @Bean
+    MessageConverter jsonConverter(ObjectMapper rabbitObjectMapper) {
+        return new Jackson2JsonMessageConverter(rabbitObjectMapper);
     }
 }
