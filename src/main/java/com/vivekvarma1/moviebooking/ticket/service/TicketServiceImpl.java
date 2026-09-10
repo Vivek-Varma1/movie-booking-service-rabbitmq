@@ -79,7 +79,7 @@ public class TicketServiceImpl implements TicketService {
 
                 ticket.getIssuedAt(),
 
-                "http://localhost:8080/api/tickets/"
+                "https://cineverse-backend.onrender.com/api/tickets/"
                         + ticket.getId()
                         + "/qr"
 
@@ -128,7 +128,7 @@ public class TicketServiceImpl implements TicketService {
 //    }
 private String buildQrContent(Ticket ticket) {
 
-    return "http://localhost:8080/api/tickets/verify/"
+    return "https://cineverse-backend.onrender.com/api/tickets/verify/"
             + ticket.getTicketNumber();
 
 }
