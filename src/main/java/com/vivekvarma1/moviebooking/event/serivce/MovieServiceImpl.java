@@ -274,7 +274,7 @@ public MovieResponse createMovie(CreateMovieRequest request) {
     ) {
 
         return movieMapper.toSummaryResponses(
-                showRepository.findMoviesByCity(cityId, LocalDate.now(IST))
+                showRepository.findMoviesByCity(cityId, LocalDate.now())
         );
     }
 
