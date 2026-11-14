@@ -89,7 +89,8 @@ and s.movie.movieStatus <> com.vivekvarma1.moviebooking.event.entity.MovieStatus
 order by s.movie.releaseDate desc
 """)
     List<Movie> findMoviesByCity(
-            @Param("cityId") Long cityId
+            @Param("cityId") Long cityId,
+         @Param("today") LocalDate today
     );
     @Query("""
 select distinct s.movie
