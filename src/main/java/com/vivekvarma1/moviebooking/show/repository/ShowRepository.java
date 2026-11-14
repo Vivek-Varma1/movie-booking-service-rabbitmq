@@ -84,6 +84,8 @@ join sc.theatre t
 where t.city.id = :cityId
 and s.status =
 com.vivekvarma1.moviebooking.show.entity.ShowStatus.OPEN_FOR_BOOKING
+and s.showDate >= :today
+and s.movie.movieStatus <> com.vivekvarma1.moviebooking.event.entity.MovieStatus.ENDED
 order by s.movie.releaseDate desc
 """)
     List<Movie> findMoviesByCity(
