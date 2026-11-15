@@ -31,14 +31,14 @@ public class BookingController {
     ) {
         return bookingService.createBooking(user,request);
     }
-
-    @PostMapping("/{bookingId}/confirm")
-    public BookingResponse confirmBooking(
-            @AuthenticationPrincipal User user,
-            @PathVariable Long bookingId
-    ) {
-        return bookingService.confirmBooking(user.getId(), bookingId);
-    }
+//
+//    @PostMapping("/{bookingId}/confirm")
+//    public BookingResponse confirmBooking(
+//            @AuthenticationPrincipal User user,
+//            @PathVariable Long bookingId
+//    ) {
+//        return bookingService.confirmBooking(user.getId(), bookingId);
+//    }
 
     @PostMapping("/{bookingId}/cancel")
     public BookingResponse cancelBooking(

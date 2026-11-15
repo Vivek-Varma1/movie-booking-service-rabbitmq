@@ -164,7 +164,7 @@ public class BookingServiceImpl implements BookingService {
         booking.confirm();
         Ticket ticket = ticketService.generateTicket(booking);
         String qrUrl =
-                "http://localhost:8080/api/tickets/"
+                "https://movie-booking-service-rabbitmq.onrender.com/api/tickets/"
                         + ticket.getId()
                         + "/qr";
 

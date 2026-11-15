@@ -110,7 +110,19 @@ public class PaymentController {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Invalid payment signature."));
         }
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
+        Order order = new RazorpayClient(keyId, keySecret).orders.fetch(orderId);
+        JSONObject notes = order.get("notes");
+        Number paidPaise = order.get("amount");
+        long expectedPaise = booking.getTotalAmount().movePointRight(2).longValueExact();
+
+        if (!bookingId.toString().equals(notes.optString("bookingId"))
+                || paidPaise.longValue() != expectedPaise) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Payment does not match this booking."));
+        }
         BookingResponse bookingResponse = bookingService.confirmBooking(user.getId(), bookingId);
 
         return ResponseEntity.ok(Map.of(
