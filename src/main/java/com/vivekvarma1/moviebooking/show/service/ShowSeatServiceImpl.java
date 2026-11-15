@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -137,8 +139,10 @@ public class ShowSeatServiceImpl implements ShowSeatService {
             }
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime lockedUntil = now.plusMinutes(LOCK_DURATION_MINUTES);
+//        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime lockedUntil = now.plusMinutes(LOCK_DURATION_MINUTES);
+        Instant lockedUntil = Instant.now()
+                .plus(Duration.ofMinutes(LOCK_DURATION_MINUTES));
 
         for (ShowSeat showSeat : showSeats) {
 

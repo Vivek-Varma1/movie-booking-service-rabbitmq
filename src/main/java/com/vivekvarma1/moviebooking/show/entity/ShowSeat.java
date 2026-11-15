@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -100,7 +101,8 @@ public class ShowSeat {
     private ShowSeatStatus status;
 
     @Column(name = "locked_until")
-    private LocalDateTime lockedUntil;
+//    private LocalDateTime lockedUntil;
+    private Instant lockedUntil;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locked_by_user_id")
@@ -140,7 +142,7 @@ public class ShowSeat {
         return isLockedBy(user) || isLockExpired();
     }
 
-    public void lock(User user, LocalDateTime until) {
+    public void lock(User user, Instant until) {
         if (isBooked()) {
             throw new SeatAlreadyBookedException(seat.getSeatLabel());
         }
@@ -189,7 +191,7 @@ public void lock(User user, LocalDateTime until) {
 
         return status == ShowSeatStatus.LOCKED
                 && lockedUntil != null
-                && lockedUntil.isBefore(LocalDateTime.now());
+                && lockedUntil.isBefore(Instant.now());
 
     }
 //    public void book() {
@@ -204,7 +206,7 @@ public void lock(User user, LocalDateTime until) {
     public boolean isLocked() {
         return status == ShowSeatStatus.LOCKED
                 && lockedUntil != null
-                && lockedUntil.isAfter(LocalDateTime.now());
+                && lockedUntil.isAfter(Instant.now());
     }
 
     public boolean isBooked() {
