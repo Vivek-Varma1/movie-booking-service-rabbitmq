@@ -20,6 +20,8 @@ public interface BookingMapper {
     @Mapping(target = "totalAmount", source = "totalAmount")
     @Mapping(target = "bookedAt", source = "bookedAt")
     @Mapping(target = "seats", source = "bookingSeats")
+    @Mapping(source = "show.startDateTime", target = "showStartTime")
+    @Mapping(source = "show.movie.posterUrl", target = "posterUrl")
     BookingResponse toResponse(Booking booking);
 
     @Mapping(target = "showSeatId", source = "showSeat.id")
