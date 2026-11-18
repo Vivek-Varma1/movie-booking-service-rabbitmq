@@ -84,7 +84,7 @@ public class TicketServiceImpl implements TicketService {
 
                 ticket.getIssuedAt(),
 
-                "movie-booking-service-rabbitmq.onrender.com/api/tickets/"
+                "https://movie-booking-service-rabbitmq.onrender.com/api/tickets/"
                         + ticket.getId()
                         + "/qr"
 
