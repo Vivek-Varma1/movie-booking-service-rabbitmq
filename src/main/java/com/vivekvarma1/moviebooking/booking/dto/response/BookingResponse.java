@@ -26,7 +26,11 @@ public record BookingResponse(
 
         LocalDateTime bookedAt,
 
-        List<BookingSeatResponse> seats
+        List<BookingSeatResponse> seats,
+        
+        LocalDateTime showStartTime, 
+        
+        String posterUrl
 
 ) {
 }
