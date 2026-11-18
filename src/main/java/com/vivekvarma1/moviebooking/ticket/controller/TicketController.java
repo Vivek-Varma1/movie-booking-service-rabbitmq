@@ -1,5 +1,6 @@
 package com.vivekvarma1.moviebooking.ticket.controller;
 
+import com.vivekvarma1.moviebooking.ticket.entity.TicketVerifyResponse;
 import com.vivekvarma1.moviebooking.ticket.response.TicketResponse;
 import com.vivekvarma1.moviebooking.ticket.service.TicketService;
 import com.vivekvarma1.moviebooking.user.entity.User;
@@ -36,6 +37,10 @@ public class TicketController {
         return ResponseEntity.ok(
                 ticketService.getQrCode(ticketId)
         );
+    }
+    @GetMapping("/verify/{ticketNumber}")
+    public TicketVerifyResponse verify(@PathVariable String ticketNumber) {
+        return ticketService.verify(ticketNumber);
     }
 //    @GetMapping("/me")
 //    public ResponseEntity<TicketResponse> myTickets(

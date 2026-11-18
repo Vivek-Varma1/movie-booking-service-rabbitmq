@@ -50,8 +50,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ping").permitAll()
                         // Authentication APIs
-                        .requestMatchers("/api/auth/**","/api/tickets/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tickets/*/qr", "/api/tickets/verify/**").permitAll()
 
+                        .requestMatchers("/api/admin/tickets/**").hasAnyRole("ADMIN", "STAFF")
+
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",

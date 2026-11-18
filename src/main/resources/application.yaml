@@ -82,3 +82,8 @@ razorpay:
   key:
     id: ${RAZORPAY_KEY_ID}
     secret: ${RAZORPAY_KEY_SECRET}
+app:
+  frontend-url: ${FRONTEND_URL:https://cineverse-booking.vercel.app}
+
+ticket:
+  check-in-opens-minutes-before: ${CHECK_IN_OPENS_MINUTES_BEFORE:120}

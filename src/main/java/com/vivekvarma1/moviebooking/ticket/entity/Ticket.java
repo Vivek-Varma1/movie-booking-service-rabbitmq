@@ -33,4 +33,7 @@ public class Ticket {
     @Lob
     @Column(name = "qr_code")
     private byte[] qrCode;
+
+    @Column(name = "used_at")
+    private LocalDateTime usedAt;
 }

@@ -2,6 +2,7 @@ package com.vivekvarma1.moviebooking.ticket.service;
 
 import com.vivekvarma1.moviebooking.booking.entity.Booking;
 import com.vivekvarma1.moviebooking.ticket.entity.Ticket;
+import com.vivekvarma1.moviebooking.ticket.entity.TicketVerifyResponse;
 import com.vivekvarma1.moviebooking.ticket.response.TicketResponse;
 import com.vivekvarma1.moviebooking.user.entity.User;
 
@@ -13,4 +14,6 @@ public interface TicketService {
 
     byte[] getQrCode(Long ticketId);
 
+    TicketVerifyResponse verify(String ticketNumber);
+    TicketVerifyResponse checkIn(String ticketNumber);
 }
