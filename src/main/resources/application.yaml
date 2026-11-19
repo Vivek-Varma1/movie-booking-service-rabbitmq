@@ -43,6 +43,7 @@ spring:
         order_updates: true
         batch_versioned_data: true
         generate_statistics: false
+        default_batch_fetch_size: 50
   mvc:
     async:
       request-timeout: 10000ms
